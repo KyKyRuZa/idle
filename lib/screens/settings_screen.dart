@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../providers/game_provider.dart';
+import '../services/app_info_service.dart';
 import '../models/game_state.dart';
 import '../theme/app_theme.dart';
 
@@ -17,7 +17,7 @@ class SettingsScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           'Настройки',
-          style: GoogleFonts.cinzel(color: AppColors.primary),
+          style: AppTheme.cinzelStyle(color: AppColors.primary),
         ),
         backgroundColor: Colors.black87,
         iconTheme: const IconThemeData(color: AppColors.primary),
@@ -71,43 +71,48 @@ class SettingsScreen extends ConsumerWidget {
             ),
             title: Text(
               'Google Play Games',
-              style: GoogleFonts.cinzel(color: AppColors.textOnDark, fontSize: 16),
+              style: AppTheme.cinzelStyle(color: AppColors.textOnDark, fontSize: 16),
             ),
             subtitle: Text(
               'Синхронизация достижений',
-              style: GoogleFonts.cinzel(color: AppColors.textSecondary, fontSize: 12),
+              style: AppTheme.cinzelStyle(color: AppColors.textSecondary, fontSize: 12),
             ),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Подключение будет в обновлении')),
+                const SnackBar(content: Text('Подключение будет в обновлении')),
               );
             },
           ),
           const SizedBox(height: 24),
           _buildSectionHeader('ИНФОРМАЦИЯ'),
-          ListTile(
-            leading: Container(
-              width: 40,
-              height: 40,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xFF8B4513), Color(0xFF5D4037)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+          Consumer(
+            builder: (context, ref, _) {
+              final version = ref.watch(appInfoServiceProvider).versionName;
+              return ListTile(
+                leading: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color(0xFF8B4513), Color(0xFF5D4037)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.info_outline, color: AppColors.primary),
                 ),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(Icons.info_outline, color: AppColors.primary),
-            ),
-            title: Text(
-              'Версия',
-              style: GoogleFonts.cinzel(color: AppColors.textOnDark, fontSize: 16),
-            ),
-            subtitle: Text(
-              '1.0.0',
-              style: GoogleFonts.cinzel(color: AppColors.textSecondary, fontSize: 12),
-            ),
+                title: Text(
+                  'Версия',
+                  style: AppTheme.cinzelStyle(color: AppColors.textOnDark, fontSize: 16),
+                ),
+                subtitle: Text(
+                  version,
+                  style: AppTheme.cinzelStyle(color: AppColors.textSecondary, fontSize: 12),
+                ),
+              );
+            },
           ),
           const SizedBox(height: 24),
           _buildSectionHeader('ОПАСНОСТЬ'),
@@ -141,7 +146,7 @@ class SettingsScreen extends ConsumerWidget {
                     children: [
                       Text(
                         'Сбросить прогресс',
-                        style: GoogleFonts.cinzel(
+                        style: AppTheme.cinzelStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: Colors.red,
@@ -149,7 +154,7 @@ class SettingsScreen extends ConsumerWidget {
                       ),
                       Text(
                         'Удалит весь прогресс навсегда',
-                        style: GoogleFonts.cinzel(
+                        style: AppTheme.cinzelStyle(
                           fontSize: 12,
                           color: AppColors.textSecondary,
                         ),
@@ -167,7 +172,7 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                   child: Text(
                     'Сброс',
-                    style: GoogleFonts.cinzel(
+                    style: AppTheme.cinzelStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
@@ -187,7 +192,7 @@ class SettingsScreen extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Text(
         title,
-        style: GoogleFonts.cinzel(
+        style: AppTheme.cinzelStyle(
           fontSize: 14,
           fontWeight: FontWeight.bold,
           color: AppColors.primary,
@@ -220,7 +225,7 @@ class SettingsScreen extends ConsumerWidget {
       ),
       title: Text(
         title,
-        style: GoogleFonts.cinzel(color: AppColors.textOnDark, fontSize: 16),
+        style: AppTheme.cinzelStyle(color: AppColors.textOnDark, fontSize: 16),
       ),
       value: value,
       onChanged: onChanged,
@@ -243,18 +248,18 @@ class SettingsScreen extends ConsumerWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           'Сбросить прогресс?',
-          style: GoogleFonts.cinzel(color: Colors.red, fontSize: 20),
+          style: AppTheme.cinzelStyle(color: Colors.red, fontSize: 20),
         ),
         content: Text(
           'Это действие нельзя отменить. Весь прогресс, включая золото, работников и улучшения, будет утерян.',
-          style: GoogleFonts.cinzel(color: AppColors.textSecondary, fontSize: 14),
+          style: AppTheme.cinzelStyle(color: AppColors.textSecondary, fontSize: 14),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(
               'Отмена',
-              style: GoogleFonts.cinzel(color: AppColors.textSecondary),
+              style: AppTheme.cinzelStyle(color: AppColors.textSecondary),
             ),
           ),
           ElevatedButton(
@@ -273,7 +278,7 @@ class SettingsScreen extends ConsumerWidget {
             ),
             child: Text(
               'Сбросить',
-              style: GoogleFonts.cinzel(color: Colors.white, fontWeight: FontWeight.bold),
+              style: AppTheme.cinzelStyle(color: Colors.white, fontWeight: FontWeight.bold),
             ),
           ),
         ],

@@ -1,55 +1,24 @@
 import 'dart:math';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-class Worker {
-  final String id;
-  final String name;
-  final int baseIncome;
-  final int baseCost;
-  int count;
-  int depthRequired;
-  final String emoji;
+part 'worker.freezed.dart';
+part 'worker.g.dart';
 
-  Worker({
-    required this.id,
-    required this.name,
-    required this.baseIncome,
-    required this.baseCost,
-    this.count = 0,
-    this.depthRequired = 1,
-    this.emoji = '',
-  });
+@freezed
+class Worker with _$Worker {
+  const factory Worker({
+    required String id,
+    required String name,
+    required int baseIncome,
+    required int baseCost,
+    @Default(0) int count,
+    @Default(1) int depthRequired,
+    @Default('') String emoji,
+  }) = _Worker;
+
+  const Worker._();
 
   int get currentCost => (baseCost * pow(1.15, count)).round();
 
-  Worker copyWith({int? count}) {
-    return Worker(
-      id: id,
-      name: name,
-      baseIncome: baseIncome,
-      baseCost: baseCost,
-      count: count ?? this.count,
-      depthRequired: depthRequired,
-      emoji: emoji,
-    );
-  }
-
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'baseIncome': baseIncome,
-        'baseCost': baseCost,
-        'count': count,
-        'depthRequired': depthRequired,
-        'emoji': emoji,
-      };
-
-  factory Worker.fromJson(Map<String, dynamic> json) => Worker(
-        id: json['id'],
-        name: json['name'],
-        baseIncome: json['baseIncome'],
-        baseCost: json['baseCost'],
-        count: json['count'] ?? 0,
-        depthRequired: json['depthRequired'] ?? 1,
-        emoji: json['emoji'] ?? '',
-      );
+  factory Worker.fromJson(Map<String, dynamic> json) => _$WorkerFromJson(json);
 }

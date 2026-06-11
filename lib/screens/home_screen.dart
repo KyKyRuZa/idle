@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../providers/game_provider.dart';
 import '../widgets/tap_button.dart';
 import '../theme/app_theme.dart';
@@ -13,11 +12,74 @@ class HomeScreen extends ConsumerWidget {
     final gameState = ref.watch(gameStateProvider);
     final goldPerSecond = ref.watch(goldPerSecondProvider);
     final canPrestige = ref.watch(canPrestigeProvider);
+    final hasMultiplierBoost = ref.watch(hasActiveMultiplierBoostProvider);
 
     final depthColors = AppColors.depthBackgrounds;
 
     return Scaffold(
       backgroundColor: depthColors[gameState.depth - 1],
+      appBar: AppBar(
+        title: null,
+        backgroundColor: Colors.black87,
+        elevation: 0,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: Consumer(
+              builder: (context, ref, _) {
+                final canClaim = ref.watch(canClaimDailyBonusProvider);
+                final streak = ref.watch(dailyStreakProvider);
+                return GestureDetector(
+                  onTap: canClaim
+                      ? () async {
+                          await ref.read(gameProvider.notifier).claimDailyBonus();
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Ежедневный бонус получен! День $streak',
+                                  style: AppTheme.cinzelStyle(),
+                                ),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                          }
+                        }
+                      : null,
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: canClaim ? Colors.amber : Colors.grey.shade700,
+                      border: Border.all(
+                        color: canClaim ? Colors.amberAccent : Colors.grey,
+                        width: 2,
+                      ),
+                    ),
+                    child: Center(
+                      child: canClaim
+                          ? Text(
+                              '$streak',
+                              style: AppTheme.cinzelStyle(
+                                color: Colors.brown.shade900,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            )
+                          : const Icon(
+                              Icons.calendar_today,
+                              color: Colors.grey,
+                              size: 24,
+                            ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Column(
           children: [
@@ -31,14 +93,14 @@ class HomeScreen extends ConsumerWidget {
                     children: [
                       Text(
                         'Слой: ${gameState.depth}/5',
-                        style: GoogleFonts.cinzel(
+                        style: AppTheme.cinzelStyle(
                           fontSize: 18,
                           color: AppColors.textOnDark,
                         ),
                       ),
                       Text(
                         'Престиж: x${gameState.prestigeMultiplier}',
-                        style: GoogleFonts.cinzel(
+                        style: AppTheme.cinzelStyle(
                           fontSize: 18,
                           color: AppColors.textOnDark,
                         ),
@@ -48,7 +110,7 @@ class HomeScreen extends ConsumerWidget {
                   if (gameState.prestigePoints != null && gameState.prestigePoints! > 0)
                     Text(
                       'Очки престижа: ${gameState.prestigePoints}',
-                      style: GoogleFonts.cinzel(
+                      style: AppTheme.cinzelStyle(
                         fontSize: 16,
                         color: AppColors.textSecondary,
                       ),
@@ -68,19 +130,19 @@ class HomeScreen extends ConsumerWidget {
                 children: [
                   Text(
                     '${gameState.gold} 💰',
-                    style: GoogleFonts.cinzel(
+                    style: AppTheme.cinzelStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
                       color: AppColors.primary,
                     ),
                   ),
-Text(
-                     '${goldPerSecond.round()} золота/сек',
-                     style: GoogleFonts.cinzel(
-                       fontSize: 14,
-                       color: AppColors.textSecondary,
-                     ),
-                   ),
+                  Text(
+                    '${goldPerSecond.round()} золота/сек${hasMultiplierBoost ? ' (×2 активно!)' : ''}',
+                    style: AppTheme.cinzelStyle(
+                      fontSize: 14,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -102,7 +164,7 @@ Text(
                   ),
                   child: Text(
                     'Возрождение шахты',
-                    style: GoogleFonts.cinzel(
+                    style: AppTheme.cinzelStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
@@ -137,7 +199,7 @@ Text(
       ),
       child: Text(
         'Следующий слой: $cost 💰',
-        style: GoogleFonts.cinzel(color: Colors.amber),
+        style: AppTheme.cinzelStyle(color: Colors.amber),
       ),
     );
   }

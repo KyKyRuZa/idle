@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../providers/game_provider.dart';
 import '../models/worker.dart';
 import '../models/game_state.dart';
@@ -19,7 +18,7 @@ class ShopScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           'Наем существ',
-          style: GoogleFonts.cinzel(color: AppColors.primary),
+          style: AppTheme.cinzelStyle(color: AppColors.primary),
         ),
         backgroundColor: Colors.black87,
         iconTheme: const IconThemeData(color: AppColors.primary),
@@ -56,14 +55,14 @@ class ShopScreen extends ConsumerWidget {
                       children: [
                         Text(
                           worker.name,
-                          style: GoogleFonts.cinzel(
+                          style: AppTheme.cinzelStyle(
                             fontSize: 18,
                             color: Colors.grey.shade400,
                           ),
                         ),
                         Text(
                           'Откроется на слое ${worker.depthRequired}',
-                          style: GoogleFonts.cinzel(
+                          style: AppTheme.cinzelStyle(
                             fontSize: 12,
                             color: Colors.grey.shade600,
                           ),
@@ -82,6 +81,11 @@ class ShopScreen extends ConsumerWidget {
   }
 
   Widget _buildWorkerTile(WidgetRef ref, Worker worker, GameState gameState) {
+    final discountPercent = gameState.workerCostDiscount;
+    final actualCost = discountPercent > 0 
+        ? (worker.currentCost * (100 - discountPercent) / 100).round()
+        : worker.currentCost;
+    
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(16),
@@ -95,7 +99,7 @@ class ShopScreen extends ConsumerWidget {
           Container(
             width: 50,
             height: 50,
-decoration: const BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [Color(0xFF8B4513), Color(0xFF5D4037)],
                 begin: Alignment.topLeft,
@@ -117,7 +121,7 @@ decoration: const BoxDecoration(
               children: [
                 Text(
                   worker.name,
-                  style: GoogleFonts.cinzel(
+                  style: AppTheme.cinzelStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textOnDark,
@@ -125,14 +129,14 @@ decoration: const BoxDecoration(
                 ),
                 Text(
                   '${worker.baseIncome} золота/сек',
-                  style: GoogleFonts.cinzel(
+                  style: AppTheme.cinzelStyle(
                     fontSize: 12,
                     color: AppColors.textSecondary,
                   ),
                 ),
                 Text(
                   'В наличии: ${worker.count}',
-                  style: GoogleFonts.cinzel(
+                  style: AppTheme.cinzelStyle(
                     fontSize: 12,
                     color: Colors.grey.shade400,
                   ),
@@ -141,17 +145,26 @@ decoration: const BoxDecoration(
             ),
           ),
           Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
+              if (discountPercent > 0)
+                Text(
+                  '${worker.currentCost} 💰',
+                  style: AppTheme.cinzelStyle(
+                    fontSize: 12,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
               Text(
-                '${worker.currentCost} 💰',
-                style: GoogleFonts.cinzel(
+                '$actualCost 💰${discountPercent > 0 ? " (-$discountPercent%)" : ""}',
+                style: AppTheme.cinzelStyle(
                   fontSize: 14,
                   color: AppColors.primary,
                 ),
               ),
               const SizedBox(height: 4),
               ElevatedButton(
-                onPressed: gameState.gold >= worker.currentCost
+                onPressed: gameState.gold >= actualCost
                     ? () => ref.read(gameProvider.notifier).buyWorker(worker.id)
                     : null,
                 style: ElevatedButton.styleFrom(
@@ -162,7 +175,7 @@ decoration: const BoxDecoration(
                 ),
                 child: Text(
                   'Купить',
-                  style: GoogleFonts.cinzel(
+                  style: AppTheme.cinzelStyle(
                     color: Colors.brown.shade900,
                     fontWeight: FontWeight.bold,
                   ),

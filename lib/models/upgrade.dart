@@ -1,45 +1,26 @@
 import 'dart:math';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-class Upgrade {
-  final String id;
-  final String name;
-  final int maxLevel;
-  int level;
-  final int baseCost;
+part 'upgrade.freezed.dart';
+part 'upgrade.g.dart';
 
-  Upgrade({
-    required this.id,
-    required this.name,
-    required this.maxLevel,
-    this.level = 0,
-    required this.baseCost,
-  });
+@freezed
+class Upgrade with _$Upgrade {
+  const factory Upgrade({
+    required String id,
+    required String name,
+    required int maxLevel,
+    @Default(0) int level,
+    required int baseCost,
+    @Default('') String description,
+    @Default(0) int effectType,
+    @Default(0) int effectValue,
+    @Default(false) bool isPermanent,
+  }) = _Upgrade;
+
+  const Upgrade._();
 
   int get currentCost => (baseCost * pow(2, level)).round();
 
-  Upgrade copyWith({int? level}) {
-    return Upgrade(
-      id: id,
-      name: name,
-      maxLevel: maxLevel,
-      level: level ?? this.level,
-      baseCost: baseCost,
-    );
-  }
-
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'maxLevel': maxLevel,
-        'level': level,
-        'baseCost': baseCost,
-      };
-
-  factory Upgrade.fromJson(Map<String, dynamic> json) => Upgrade(
-        id: json['id'],
-        name: json['name'],
-        maxLevel: json['maxLevel'],
-        level: json['level'] ?? 0,
-        baseCost: json['baseCost'],
-      );
+  factory Upgrade.fromJson(Map<String, dynamic> json) => _$UpgradeFromJson(json);
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../providers/game_provider.dart';
 import '../models/upgrade.dart';
 import '../models/game_state.dart';
@@ -19,7 +18,7 @@ class UpgradesScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           'Улучшения',
-          style: GoogleFonts.cinzel(color: AppColors.primary),
+          style: AppTheme.cinzelStyle(color: AppColors.primary),
         ),
         backgroundColor: Colors.black87,
         iconTheme: const IconThemeData(color: AppColors.primary),
@@ -41,6 +40,18 @@ class UpgradesScreen extends ConsumerWidget {
     } else if (upgrade.id == 'luck') {
       final bonus = upgrade.level * 5;
       description = '+$bonus% к шансу крита (ур. ${upgrade.level}/8)';
+    } else if (upgrade.id == 'ore_shield') {
+      final bonus = upgrade.level * 20;
+      description = '+$bonus% к доходу рабочих (ур. ${upgrade.level}/10)';
+    } else if (upgrade.id == 'quality_steel') {
+      final bonus = upgrade.level * 5;
+      description = '-$bonus% к цене рабочих (ур. ${upgrade.level}/5)';
+    } else if (upgrade.id == 'auto_tap_speed') {
+      description = 'Авто-тап каждые 2 сек (ур. ${upgrade.level}/3)';
+    } else if (upgrade.id == 'crit_amplifier') {
+      description = 'Крит x10 вместо x5 (ур. ${upgrade.level}/3)';
+    } else if (upgrade.id == 'mole_fist') {
+      description = '+2 к силе тапа (ур. ${upgrade.level}/${upgrade.maxLevel})';
     } else {
       description = 'Авто-тап каждые 3 секунды';
     }
@@ -56,7 +67,7 @@ class UpgradesScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: AppColors.cardBackground,
         borderRadius: BorderRadius.circular(12),
-border: Border.all(
+        border: Border.all(
           color: upgrade.level >= upgrade.maxLevel
               ? Colors.greenAccent.withValues(alpha: 0.5)
               : Colors.amber.withValues(alpha: 0.4),
@@ -68,7 +79,7 @@ border: Border.all(
           Container(
             width: 50,
             height: 50,
-decoration: const BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [Color(0xFF8B4513), Color(0xFF5D4037)],
                 begin: Alignment.topLeft,
@@ -82,7 +93,17 @@ decoration: const BoxDecoration(
                     ? Icons.touch_app
                     : upgrade.id == 'luck'
                         ? Icons.casino
-                        : Icons.autorenew,
+                        : upgrade.id == 'ore_shield'
+                            ? Icons.shield
+                            : upgrade.id == 'quality_steel'
+                                ? Icons.build
+                                : upgrade.id == 'auto_tap_speed'
+                                    ? Icons.speed
+                                    : upgrade.id == 'crit_amplifier'
+                                        ? Icons.flash_on
+                                        : upgrade.id == 'mole_fist'
+                                            ? Icons.sports_mma
+                                            : Icons.autorenew,
                 color: iconColor,
                 size: 24,
               ),
@@ -95,7 +116,7 @@ decoration: const BoxDecoration(
               children: [
                 Text(
                   upgrade.name,
-                  style: GoogleFonts.cinzel(
+                  style: AppTheme.cinzelStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textOnDark,
@@ -103,7 +124,7 @@ decoration: const BoxDecoration(
                 ),
                 Text(
                   description,
-                  style: GoogleFonts.cinzel(
+                  style: AppTheme.cinzelStyle(
                     fontSize: 12,
                     color: upgrade.level >= upgrade.maxLevel
                         ? Colors.greenAccent.shade200
@@ -131,7 +152,7 @@ decoration: const BoxDecoration(
               upgrade.level >= upgrade.maxLevel
                   ? 'Макс.'
                   : '${upgrade.currentCost} 💰',
-              style: GoogleFonts.cinzel(
+              style: AppTheme.cinzelStyle(
                 color: upgrade.level >= upgrade.maxLevel
                     ? Colors.white
                     : Colors.brown.shade900,

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'providers/game_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/shop_screen.dart';
@@ -22,7 +21,11 @@ class IdleStrongholdApp extends StatelessWidget {
       theme: ThemeData(
         scaffoldBackgroundColor: AppColors.depthBackgrounds[0],
         primaryColor: AppColors.primary,
-        textTheme: GoogleFonts.cinzelTextTheme().apply(
+        fontFamily: 'Cinzel',
+        textTheme: TextTheme(
+          bodyMedium: TextStyle(color: AppColors.textOnDark),
+          displayMedium: TextStyle(color: AppColors.textOnDark),
+        ).apply(
           bodyColor: AppColors.textOnDark,
           displayColor: AppColors.textOnDark,
         ),
@@ -46,13 +49,14 @@ class MainScreen extends ConsumerWidget {
 }
 
 class _MainScreenContent extends StatefulWidget {
-  const _MainScreenContent({super.key});
+  const _MainScreenContent();
 
   @override
   State<_MainScreenContent> createState() => _MainScreenContentState();
 }
 
-class _MainScreenContentState extends State<_MainScreenContent> with WidgetsBindingObserver {
+class _MainScreenContentState extends State<_MainScreenContent>
+    with WidgetsBindingObserver {
   final List<Widget> _screens = const [
     HomeScreen(),
     ShopScreen(),

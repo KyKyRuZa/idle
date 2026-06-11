@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class AppColors {
   static const Color primary = Color(0xFFFFD700);
@@ -27,7 +26,11 @@ class AppColors {
 final ThemeData appTheme = ThemeData(
   scaffoldBackgroundColor: AppColors.depthBackgrounds[0],
   primaryColor: AppColors.primary,
-  textTheme: GoogleFonts.cinzelTextTheme().apply(
+  fontFamily: 'Cinzel',
+  textTheme: TextTheme(
+    bodyMedium: TextStyle(color: AppColors.textOnDark),
+    displayMedium: TextStyle(color: AppColors.textOnDark),
+  ).apply(
     bodyColor: AppColors.textOnDark,
     displayColor: AppColors.textOnDark,
   ),
@@ -45,3 +48,19 @@ final ThemeData appTheme = ThemeData(
     iconTheme: IconThemeData(color: AppColors.primary),
   ),
 );
+
+class AppTheme {
+  static TextStyle cinzelStyle({
+    double? fontSize,
+    FontWeight? fontWeight,
+    Color? color,
+    double? letterSpacing,
+  }) =>
+      TextStyle(
+        fontFamily: 'Cinzel',
+        fontSize: fontSize,
+        fontWeight: fontWeight,
+        color: color,
+        letterSpacing: letterSpacing,
+      );
+}
