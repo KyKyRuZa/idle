@@ -187,6 +187,7 @@ class GameNotifier extends StateNotifier<GameData> {
         final workersForCalc =
             savedWorkers.isNotEmpty ? savedWorkers : _defaultWorkers();
         final offlineGold = _calculateOfflineGold(savedState, workersForCalc);
+        final mergedUpgrades = _mergeUpgrades(savedUpgrades);
         state = GameData(
           gameState: savedState.copyWith(
             gold: savedState.gold + offlineGold,
@@ -194,8 +195,7 @@ class GameNotifier extends StateNotifier<GameData> {
             lastSavedTime: null,
           ),
           workers: workersForCalc,
-          upgrades:
-              savedUpgrades.isNotEmpty ? savedUpgrades : _defaultUpgrades(),
+          upgrades: mergedUpgrades,
         );
       }
     } catch (e) {
@@ -203,6 +203,24 @@ class GameNotifier extends StateNotifier<GameData> {
         print('Error loading game: $e');
       }
     }
+  }
+
+  List<Upgrade> _mergeUpgrades(List<Upgrade> savedUpgrades) {
+    final savedMap = {for (var u in savedUpgrades) u.id: u};
+
+    final merged = <Upgrade>[];
+    for (final def in _defaultUpgrades()) {
+      if (savedMap.containsKey(def.id)) {
+        merged.add(savedMap[def.id]!.copyWith(
+          maxLevel: def.maxLevel,
+          baseCost: def.baseCost,
+          description: def.description,
+        ));
+      } else {
+        merged.add(def);
+      }
+    }
+    return merged;
   }
 
   int _calculateOfflineGold(GameState savedState, List<Worker> workers) {
