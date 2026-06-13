@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/game_provider.dart';
 import '../widgets/tap_button.dart';
 import '../theme/app_theme.dart';
+import 'settings_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -12,71 +13,52 @@ class HomeScreen extends ConsumerWidget {
     final gameState = ref.watch(gameStateProvider);
     final goldPerSecond = ref.watch(goldPerSecondProvider);
     final canPrestige = ref.watch(canPrestigeProvider);
-    final hasMultiplierBoost = ref.watch(hasActiveMultiplierBoostProvider);
 
     final depthColors = AppColors.depthBackgrounds;
 
     return Scaffold(
       backgroundColor: depthColors[gameState.depth - 1],
       appBar: AppBar(
-        title: null,
         backgroundColor: Colors.black87,
         elevation: 0,
+        title: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: Colors.black54,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+                color: Colors.amber.withValues(alpha: 0.5), width: 1),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.monetization_on,
+                  color: AppColors.primary, size: 20),
+              const SizedBox(width: 4),
+              Text(
+                gameState.gold.toString(),
+                style: AppTheme.cinzelStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primary,
+                ),
+              ),
+              const SizedBox(width: 2),
+              Text(
+                '/ ${goldPerSecond.round()} в сек',
+                style: AppTheme.cinzelStyle(
+                  fontSize: 12,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ],
+          ),
+        ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Consumer(
-              builder: (context, ref, _) {
-                final canClaim = ref.watch(canClaimDailyBonusProvider);
-                final streak = ref.watch(dailyStreakProvider);
-                return GestureDetector(
-                  onTap: canClaim
-                      ? () async {
-                          await ref.read(gameProvider.notifier).claimDailyBonus();
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  'Ежедневный бонус получен! День $streak',
-                                  style: AppTheme.cinzelStyle(),
-                                ),
-                                backgroundColor: Colors.green,
-                              ),
-                            );
-                          }
-                        }
-                      : null,
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: canClaim ? Colors.amber : Colors.grey.shade700,
-                      border: Border.all(
-                        color: canClaim ? Colors.amberAccent : Colors.grey,
-                        width: 2,
-                      ),
-                    ),
-                    child: Center(
-                      child: canClaim
-                          ? Text(
-                              '$streak',
-                              style: AppTheme.cinzelStyle(
-                                color: Colors.brown.shade900,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            )
-                          : const Icon(
-                              Icons.calendar_today,
-                              color: Colors.grey,
-                              size: 24,
-                            ),
-                    ),
-                  ),
-                );
-              },
-            ),
+          IconButton(
+            icon:
+                const Icon(Icons.settings, color: AppColors.primary, size: 24),
+            onPressed: () => _showSettingsModal(context),
           ),
         ],
       ),
@@ -107,7 +89,8 @@ class HomeScreen extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  if (gameState.prestigePoints != null && gameState.prestigePoints! > 0)
+                  if (gameState.prestigePoints != null &&
+                      gameState.prestigePoints! > 0)
                     Text(
                       'Очки престижа: ${gameState.prestigePoints}',
                       style: AppTheme.cinzelStyle(
@@ -119,34 +102,6 @@ class HomeScreen extends ConsumerWidget {
               ),
             ),
             const Spacer(),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              decoration: BoxDecoration(
-                color: AppColors.cardBackground,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.amber.withValues(alpha: 0.5), width: 2),
-              ),
-              child: Column(
-                children: [
-                  Text(
-                    '${gameState.gold} 💰',
-                    style: AppTheme.cinzelStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primary,
-                    ),
-                  ),
-                  Text(
-                    '${goldPerSecond.round()} золота/сек${hasMultiplierBoost ? ' (×2 активно!)' : ''}',
-                    style: AppTheme.cinzelStyle(
-                      fontSize: 14,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 40),
             const TapButton(),
             const SizedBox(height: 40),
             const Spacer(),
@@ -157,7 +112,8 @@ class HomeScreen extends ConsumerWidget {
                   onPressed: () => ref.read(gameProvider.notifier).prestige(),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.prestigeButton,
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 32, vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
@@ -177,6 +133,30 @@ class HomeScreen extends ConsumerWidget {
                 child: _buildDepthUpgradeButton(ref),
               ),
           ],
+        ),
+      ),
+    );
+  }
+
+  void _showSettingsModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.85,
+        decoration: const BoxDecoration(
+          color: Colors.black87,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: const Material(
+          color: Colors.transparent,
+          child: Column(
+            children: [
+              SizedBox(height: 12),
+              Expanded(child: SettingsScreen()),
+            ],
+          ),
         ),
       ),
     );

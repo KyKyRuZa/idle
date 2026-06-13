@@ -122,10 +122,6 @@ class _MainScreenContentState extends State<_MainScreenContent>
             icon: Icon(Icons.upgrade),
             label: 'Улучшения',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Настройки',
-          ),
         ],
       ),
     );

@@ -17,11 +17,12 @@ class ShopScreen extends ConsumerWidget {
       backgroundColor: AppColors.depthBackgrounds[0],
       appBar: AppBar(
         title: Text(
-          'Наем существ',
+          'Существа',
           style: AppTheme.cinzelStyle(color: AppColors.primary),
         ),
         backgroundColor: Colors.black87,
         iconTheme: const IconThemeData(color: AppColors.primary),
+        leading: const Icon(Icons.groups, color: AppColors.primary),
       ),
       body: ListView.builder(
         itemCount: workers.length,

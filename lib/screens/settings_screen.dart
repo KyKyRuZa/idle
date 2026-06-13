@@ -12,178 +12,169 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final gameState = ref.watch(gameStateProvider);
 
-    return Scaffold(
-      backgroundColor: AppColors.depthBackgrounds[0],
-      appBar: AppBar(
-        title: Text(
-          'Настройки',
-          style: AppTheme.cinzelStyle(color: AppColors.primary),
+    return ListView(
+      padding: const EdgeInsets.only(top: 16),
+      children: [
+        const SizedBox(height: 8),
+        _buildSectionHeader('ИГРА'),
+        _buildSwitchTile(
+          context: context,
+          icon: Icons.music_note,
+          title: 'Музыка',
+          value: gameState.musicEnabled,
+          onChanged: (value) => _updateSetting(ref, (s) => s.copyWith(musicEnabled: value)),
         ),
-        backgroundColor: Colors.black87,
-        iconTheme: const IconThemeData(color: AppColors.primary),
-      ),
-      body: ListView(
-        children: [
-          _buildSectionHeader('ИГРА'),
-          _buildSwitchTile(
-            context: context,
-            icon: Icons.music_note,
-            title: 'Музыка',
-            value: gameState.musicEnabled,
-            onChanged: (value) => _updateSetting(ref, (s) => s.copyWith(musicEnabled: value)),
-          ),
-          _buildSwitchTile(
-            context: context,
-            icon: Icons.volume_up,
-            title: 'Звуки',
-            value: gameState.soundsEnabled,
-            onChanged: (value) => _updateSetting(ref, (s) => s.copyWith(soundsEnabled: value)),
-          ),
-          _buildSwitchTile(
-            context: context,
-            icon: Icons.auto_awesome,
-            title: 'Эффекты',
-            value: gameState.effectsEnabled,
-            onChanged: (value) => _updateSetting(ref, (s) => s.copyWith(effectsEnabled: value)),
-          ),
-          _buildSwitchTile(
-            context: context,
-            icon: Icons.vibration,
-            title: 'Вибрация',
-            value: gameState.vibrationEnabled,
-            onChanged: (value) => _updateSetting(ref, (s) => s.copyWith(vibrationEnabled: value)),
-          ),
-          const SizedBox(height: 24),
-          _buildSectionHeader('АККАУНТ'),
-          ListTile(
-            leading: Container(
-              width: 40,
-              height: 40,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xFF8B4513), Color(0xFF5D4037)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                shape: BoxShape.circle,
+        _buildSwitchTile(
+          context: context,
+          icon: Icons.volume_up,
+          title: 'Звуки',
+          value: gameState.soundsEnabled,
+          onChanged: (value) => _updateSetting(ref, (s) => s.copyWith(soundsEnabled: value)),
+        ),
+        _buildSwitchTile(
+          context: context,
+          icon: Icons.auto_awesome,
+          title: 'Эффекты',
+          value: gameState.effectsEnabled,
+          onChanged: (value) => _updateSetting(ref, (s) => s.copyWith(effectsEnabled: value)),
+        ),
+        _buildSwitchTile(
+          context: context,
+          icon: Icons.vibration,
+          title: 'Вибрация',
+          value: gameState.vibrationEnabled,
+          onChanged: (value) => _updateSetting(ref, (s) => s.copyWith(vibrationEnabled: value)),
+        ),
+        const SizedBox(height: 24),
+        _buildSectionHeader('АККАУНТ'),
+        ListTile(
+          leading: Container(
+            width: 40,
+            height: 40,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF8B4513), Color(0xFF5D4037)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
-              child: const Icon(Icons.login, color: AppColors.primary),
+              shape: BoxShape.circle,
             ),
-            title: Text(
-              'Google Play Games',
-              style: AppTheme.cinzelStyle(color: AppColors.textOnDark, fontSize: 16),
-            ),
-            subtitle: Text(
-              'Синхронизация достижений',
-              style: AppTheme.cinzelStyle(color: AppColors.textSecondary, fontSize: 12),
-            ),
-            trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Подключение будет в обновлении')),
-              );
-            },
+            child: const Icon(Icons.login, color: AppColors.primary),
           ),
-          const SizedBox(height: 24),
-          _buildSectionHeader('ИНФОРМАЦИЯ'),
-          Consumer(
-            builder: (context, ref, _) {
-              final version = ref.watch(appInfoServiceProvider).versionName;
-              return ListTile(
-                leading: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Color(0xFF8B4513), Color(0xFF5D4037)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(Icons.info_outline, color: AppColors.primary),
-                ),
-                title: Text(
-                  'Версия',
-                  style: AppTheme.cinzelStyle(color: AppColors.textOnDark, fontSize: 16),
-                ),
-                subtitle: Text(
-                  version,
-                  style: AppTheme.cinzelStyle(color: AppColors.textSecondary, fontSize: 12),
-                ),
-              );
-            },
+          title: Text(
+            'Google Play Games',
+            style: AppTheme.cinzelStyle(color: AppColors.textOnDark, fontSize: 16),
           ),
-          const SizedBox(height: 24),
-          _buildSectionHeader('ОПАСНОСТЬ'),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.red.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.red.withValues(alpha: 0.3), width: 1.5),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Color(0xFF8B4513), Color(0xFF5D4037)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    shape: BoxShape.circle,
+          subtitle: Text(
+            'Синхронизация достижений',
+            style: AppTheme.cinzelStyle(color: AppColors.textSecondary, fontSize: 12),
+          ),
+          trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+          onTap: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Подключение будет в обновлении')),
+            );
+          },
+        ),
+        const SizedBox(height: 24),
+        _buildSectionHeader('ИНФОРМАЦИЯ'),
+        Consumer(
+          builder: (context, ref, _) {
+            final version = ref.watch(appInfoServiceProvider).versionName;
+            return ListTile(
+              leading: Container(
+                width: 40,
+                height: 40,
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xFF8B4513), Color(0xFF5D4037)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
-                  child: const Icon(Icons.delete_forever, color: Colors.red),
+                  shape: BoxShape.circle,
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Сбросить прогресс',
-                        style: AppTheme.cinzelStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.red,
-                        ),
+                child: const Icon(Icons.info_outline, color: AppColors.primary),
+              ),
+              title: Text(
+                'Версия',
+                style: AppTheme.cinzelStyle(color: AppColors.textOnDark, fontSize: 16),
+              ),
+              subtitle: Text(
+                version,
+                style: AppTheme.cinzelStyle(color: AppColors.textSecondary, fontSize: 12),
+              ),
+            );
+          },
+        ),
+        const SizedBox(height: 24),
+        _buildSectionHeader('ОПАСНОСТЬ'),
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.red.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.red.withValues(alpha: 0.3), width: 1.5),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xFF8B4513), Color(0xFF5D4037)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.delete_forever, color: Colors.red),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Сбросить прогресс',
+                      style: AppTheme.cinzelStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red,
                       ),
-                      Text(
-                        'Удалит весь прогресс навсегда',
-                        style: AppTheme.cinzelStyle(
-                          fontSize: 12,
-                          color: AppColors.textSecondary,
-                        ),
+                    ),
+                    Text(
+                      'Удалит весь прогресс навсегда',
+                      style: AppTheme.cinzelStyle(
+                        fontSize: 12,
+                        color: AppColors.textSecondary,
                       ),
-                    ],
+                    ),
+                  ],
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () => _showResetDialog(context, ref),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
                   ),
                 ),
-                ElevatedButton(
-                  onPressed: () => _showResetDialog(context, ref),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                  child: Text(
-                    'Сброс',
-                    style: AppTheme.cinzelStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
+                child: Text(
+                  'Сброс',
+                  style: AppTheme.cinzelStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          const SizedBox(height: 32),
-        ],
-      ),
+        ),
+        const SizedBox(height: 32),
+      ],
     );
   }
 
